@@ -33,12 +33,12 @@ class PressureGauge extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Color(0xFF1A73E8),
                 ),
               ),
               const Text(
                 'PSI',
-                style: TextStyle(fontSize: 16, color: Colors.cyan),
+                style: TextStyle(fontSize: 16, color: Color(0xFF0097A7)),
               ),
             ],
           ),
@@ -82,7 +82,7 @@ class GaugePainter extends CustomPainter {
       sweepAngle,
       false,
       Paint()
-        ..color = Colors.white12
+        ..color = const Color(0xFFCFD8DC)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 18
         ..strokeCap = StrokeCap.round,
@@ -100,7 +100,7 @@ class GaugePainter extends CustomPainter {
         ..shader = SweepGradient(
           startAngle: startAngle,
           endAngle: startAngle + sweepAngle,
-          colors: const [Colors.cyan, Colors.blue],
+          colors: const [Color(0xFF0097A7), Color(0xFF1565C0)],
         ).createShader(Rect.fromCircle(center: center, radius: radius))
         ..style = PaintingStyle.stroke
         ..strokeWidth = 18
@@ -129,7 +129,7 @@ class GaugePainter extends CustomPainter {
       p1,
       p2,
       Paint()
-        ..color = Colors.cyanAccent
+        ..color = const Color(0xFF00838F)
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round,
     );
@@ -145,7 +145,7 @@ class GaugePainter extends CustomPainter {
       text: TextSpan(
         text: target.toInt().toString(),
         style: const TextStyle(
-          color: Colors.cyanAccent,
+          color: Color(0xFF00838F),
           fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
@@ -169,7 +169,7 @@ class GaugePainter extends CustomPainter {
       center,
       needleEnd,
       Paint()
-        ..color = Colors.white
+        ..color = const Color(0xFF616161)
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round,
     );
@@ -185,7 +185,7 @@ class GaugePainter extends CustomPainter {
       text: TextSpan(
         text: (max * progress).toStringAsFixed(0),
         style: const TextStyle(
-          color: Colors.white,
+          color: Color(0xFF212121),
           fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
@@ -200,7 +200,7 @@ class GaugePainter extends CustomPainter {
   }
 
   void _drawCenter(Canvas canvas, Offset center) {
-    canvas.drawCircle(center, 8, Paint()..color = Colors.white);
+    canvas.drawCircle(center, 8, Paint()..color = const Color(0xFF1A73E8));
   }
 
   void _drawLabels(Canvas canvas, Offset center, double radius) {
@@ -227,7 +227,7 @@ class GaugePainter extends CustomPainter {
     final tp = TextPainter(
       text: TextSpan(
         text: text,
-        style: const TextStyle(color: Colors.white54, fontSize: 13),
+        style: const TextStyle(color: Color(0xFF546E7A), fontSize: 13),
       ),
       textDirection: TextDirection.ltr,
     )..layout();

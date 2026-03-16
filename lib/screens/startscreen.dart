@@ -162,8 +162,6 @@ class _StartscreenState extends State<Startscreen>
                             ),
 
                             const SizedBox(height: 14),
-
-                            // فاصل
                             Row(
                               children: [
                                 Expanded(
