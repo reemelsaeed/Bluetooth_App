@@ -35,12 +35,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
     startScan();
   }
 
-  // Future<void> requestPermissions() async {
-  //   await Permission.location.request();
-  //   await Permission.bluetoothScan.request();
-  //   await Permission.bluetoothConnect.request();
-  // }
-
   Future<void> requestPermissions() async {
     if (Platform.isAndroid) {
       await Permission.location.request();
@@ -63,7 +57,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
       if (espDevices.isNotEmpty) {
         setState(() => scanedDevices = espDevices);
       }
-      // setState(() => scanedDevices = espDevices);
     });
   }
 

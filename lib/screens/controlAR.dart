@@ -363,7 +363,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                           onSubmitted: (value) async {
                             if (value.isEmpty) return;
                             if (displayTarget.isNotEmpty &&
-                                int.parse(value) > int.parse(displayTarget)) {
+                                int.parse(value) >= int.parse(displayTarget)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -375,7 +375,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                               return;
                             }
                             if (displayMax.isNotEmpty &&
-                                int.parse(value) > int.parse(displayMax)) {
+                                int.parse(value) >= int.parse(displayMax)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -590,7 +590,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                               _maxcontroller.clear();
                               return;
                             }
-                            if (int.parse(value) < int.parse(displayMin)) {
+                            if (int.parse(value) <= int.parse(displayMin)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -601,7 +601,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                               _maxcontroller.clear();
                               return;
                             }
-                            if (int.parse(value) < int.parse(displayTarget)) {
+                            if (int.parse(value) <= int.parse(displayTarget)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -660,7 +660,6 @@ class _ControlScreenState extends State<ControlArScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // الحالة
                 Row(
                   children: [
                     Container(

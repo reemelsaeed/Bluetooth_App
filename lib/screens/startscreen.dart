@@ -85,7 +85,6 @@ class _StartscreenState extends State<Startscreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // اللوجو
                       Container(
                         width: 90,
                         height: 90,
@@ -99,10 +98,7 @@ class _StartscreenState extends State<Startscreen>
                         ),
                         child: Icon(Icons.bluetooth, color: _cyan, size: 44),
                       ),
-
                       const SizedBox(height: 28),
-
-                      // اسم التطبيق
                       const Text(
                         'AIR SYSTEM',
                         style: TextStyle(
@@ -112,10 +108,7 @@ class _StartscreenState extends State<Startscreen>
                           letterSpacing: 3,
                         ),
                       ),
-
                       const SizedBox(height: 8),
-
-                      // وصف صغير
                       Text(
                         'اختر لغتك  •  Choose your language',
                         style: TextStyle(
@@ -124,10 +117,7 @@ class _StartscreenState extends State<Startscreen>
                           letterSpacing: 0.5,
                         ),
                       ),
-
                       const SizedBox(height: 52),
-
-                      // كارت اختيار اللغة
                       Container(
                         decoration: BoxDecoration(
                           color: _card,
@@ -144,11 +134,10 @@ class _StartscreenState extends State<Startscreen>
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            // زر العربية
                             _LanguageButton(
                               label: 'العربية',
                               sublabel: 'Arabic',
-                              icon: '🇸🇦',
+                              icon: '🇦🇪',
                               color: _cyan,
                               onTap: () => Navigator.push(
                                 context,
@@ -157,7 +146,6 @@ class _StartscreenState extends State<Startscreen>
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 14),
                             Row(
                               children: [
@@ -183,10 +171,7 @@ class _StartscreenState extends State<Startscreen>
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 14),
-
-                            // زر الإنجليزية
                             _LanguageButton(
                               label: 'English',
                               sublabel: 'الإنجليزية',
