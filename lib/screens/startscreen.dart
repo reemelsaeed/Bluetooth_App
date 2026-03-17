@@ -51,7 +51,6 @@ class _StartscreenState extends State<Startscreen>
       backgroundColor: _bg,
       body: Stack(
         children: [
-          // الدوائر الزخرفية
           Positioned(
             top: -60,
             right: -60,
@@ -76,8 +75,6 @@ class _StartscreenState extends State<Startscreen>
               ),
             ),
           ),
-
-          // المحتوى الرئيسي
           Center(
             child: FadeTransition(
               opacity: _fadeIn,

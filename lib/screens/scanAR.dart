@@ -16,8 +16,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
   StreamSubscription? _scanSub;
   List<ScanResult> scanedDevices = [];
   bool isConnecting = false;
-
-  // ── الألوان ──────────────────────────────────────────
   static const Color _bg = Colors.white;
   static const Color _card = Color(0xFFF5F7FB);
   static const Color _border = Color(0xFFD8DEF0);
@@ -126,7 +124,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
         ),
         child: Row(
           children: [
-            // السهم على اليسار في RTL
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -275,7 +272,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
         ),
         body: Column(
           children: [
-            // ── الهيدر ──────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
               child: Row(
@@ -311,8 +307,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
                 ],
               ),
             ),
-
-            // ── القائمة ────────────────────────────────────────
             Expanded(
               child: scanedDevices.isEmpty
                   ? _buildEmptyState()
@@ -324,7 +318,6 @@ class _Scan2ScreenState extends State<ScanARScreen> {
                     ),
             ),
 
-            // ── زر البحث ─────────────────────────────────
             _buildScanButton(),
           ],
         ),

@@ -13,7 +13,6 @@ class ControlArScreen extends StatefulWidget {
 }
 
 class _ControlScreenState extends State<ControlArScreen> {
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
   List<BluetoothService> services = [];
   BluetoothCharacteristic? selectedChar;
   BluetoothCharacteristic? minChar;
@@ -55,39 +54,46 @@ class _ControlScreenState extends State<ControlArScreen> {
       debugPrint('selectedChar is null');
       return;
     }
+
+    if (minChar != null) {
+      try {
+        final val = await minChar!.read();
+        if (val.isNotEmpty && val[0] != 0) {
+          setState(() => displayMin = val[0].toString());
+        }
+      } catch (e) {
+        debugPrint('minChar read error: $e');
+      }
+    }
+    if (targetChar != null) {
+      try {
+        final val = await targetChar!.read();
+        if (val.isNotEmpty && val[0] != 0) {
+          setState(() => displayTarget = val[0].toString());
+        }
+      } catch (e) {
+        debugPrint('targetChar read error: $e');
+      }
+    }
+    if (maxChar != null) {
+      try {
+        final val = await maxChar!.read();
+        if (val.isNotEmpty && val[0] != 0) {
+          setState(() => displayMax = val[0].toString());
+        }
+      } catch (e) {
+        debugPrint('maxChar read error: $e');
+      }
+    }
     await selectedChar!.setNotifyValue(true);
     selectedChar!.onValueReceived.listen((value) {
       debugPrint('Data received: $value');
-      if (mounted) {
+      if (mounted && value.isNotEmpty) {
         setState(() {
           recivedValue = value[0].toString();
         });
       }
     });
-    if (minChar != null) {
-      await minChar!.setNotifyValue(true);
-      minChar!.onValueReceived.listen((value) {
-        if (mounted) {
-          setState(() => displayMin = value[0].toString());
-        }
-      });
-    }
-    if (maxChar != null) {
-      await maxChar!.setNotifyValue(true);
-      maxChar!.onValueReceived.listen((value) {
-        if (mounted) {
-          setState(() => displayMax = value[0].toString());
-        }
-      });
-    }
-    if (targetChar != null) {
-      await targetChar!.setNotifyValue(true);
-      targetChar!.onValueReceived.listen((value) {
-        if (mounted) {
-          setState(() => displayTarget = value[0].toString());
-        }
-      });
-    }
   }
 
   Future<void> sendonRe(BluetoothCharacteristic? char, List<int> value) async {
@@ -135,18 +141,18 @@ class _ControlScreenState extends State<ControlArScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: WillPopScope(
-        onWillPop: () async {
-          await widget.device.disconnect();
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const Startscreen()),
-            (route) => false,
-          );
-          return false;
-        },
+    return WillPopScope(
+      onWillPop: () async {
+        await widget.device.disconnect();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const Startscreen()),
+          (route) => false,
+        );
+        return false;
+      },
+      child: Directionality(
+        textDirection: TextDirection.rtl,
         child: Scaffold(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
@@ -297,7 +303,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                                           ).showSnackBar(
                                             const SnackBar(
                                               content: Text(
-                                                "Please set Min first",
+                                                "يرجى تعيين الحد الأدنى أولاً",
                                               ),
                                             ),
                                           );
@@ -339,14 +345,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                                           targetChar,
                                           value.codeUnits,
                                         );
-                                        await Future.delayed(
-                                          const Duration(milliseconds: 200),
-                                        );
-                                        final val = await targetChar!.read();
-                                        setState(
-                                          () =>
-                                              displayTarget = val[0].toString(),
-                                        );
+                                        setState(() => displayTarget = value);
                                         _targetcontroller.clear();
                                       },
                                     ),
@@ -371,7 +370,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                 ),
 
                 const SizedBox(height: 20),
-                // العداد
+
                 PressureGauge(
                   current: double.tryParse(recivedValue) ?? 0,
                   target: double.tryParse(displayTarget) ?? 0,
@@ -379,7 +378,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                 ),
 
                 const SizedBox(height: 16),
-                // كارت الحد الأدنى
+
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
                   decoration: BoxDecoration(
@@ -468,11 +467,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                               return;
                             }
                             await sendonRe(minChar, value.codeUnits);
-                            await Future.delayed(
-                              const Duration(milliseconds: 200),
-                            );
-                            final val = await minChar!.read();
-                            setState(() => displayMin = val[0].toString());
+                            setState(() => displayMin = value);
                             _mincontroller.clear();
                           },
                         ),
@@ -482,8 +477,6 @@ class _ControlScreenState extends State<ControlArScreen> {
                 ),
 
                 const SizedBox(height: 12),
-
-                // كارت الحد الأقصى
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
                   decoration: BoxDecoration(
@@ -550,7 +543,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                             if (displayMin.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Please set Min first"),
+                                  content: Text("يرجى تعيين الحد الأدنى أولاً"),
                                 ),
                               );
                               _maxcontroller.clear();
@@ -559,14 +552,13 @@ class _ControlScreenState extends State<ControlArScreen> {
                             if (displayTarget.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Please set Target first"),
+                                  content: Text("يرجى تعيين الهدف أولاً"),
                                 ),
                               );
                               _maxcontroller.clear();
                               return;
                             }
-                            if (displayMin.isNotEmpty &&
-                                int.parse(value) < int.parse(displayMin)) {
+                            if (int.parse(value) < int.parse(displayMin)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -577,12 +569,19 @@ class _ControlScreenState extends State<ControlArScreen> {
                               _maxcontroller.clear();
                               return;
                             }
+                            if (int.parse(value) < int.parse(displayTarget)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "الحد الأقصى لا يمكن أن يكون أقل من الهدف",
+                                  ),
+                                ),
+                              );
+                              _maxcontroller.clear();
+                              return;
+                            }
                             await sendonRe(maxChar, value.codeUnits);
-                            await Future.delayed(
-                              const Duration(milliseconds: 200),
-                            );
-                            final val = await maxChar!.read();
-                            setState(() => displayMax = val[0].toString());
+                            setState(() => displayMax = value);
                             _maxcontroller.clear();
                           },
                         ),
@@ -592,7 +591,7 @@ class _ControlScreenState extends State<ControlArScreen> {
                 ),
 
                 const SizedBox(height: 30),
-                // كارت الصورة
+
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),

@@ -53,8 +53,6 @@ class _ControlScreenState extends State<ControlScreen> {
       debugPrint('selectedChar is null');
       return;
     }
-
-    // قرا القيم الموجودة من الـ ESP
     if (minChar != null) {
       try {
         final val = await minChar!.read();
@@ -85,8 +83,6 @@ class _ControlScreenState extends State<ControlScreen> {
         debugPrint('maxChar read error: $e');
       }
     }
-
-    // notify للضغط المباشر فقط
     await selectedChar!.setNotifyValue(true);
     selectedChar!.onValueReceived.listen((value) {
       debugPrint('Data received: $value');

@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeARScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              // أيقونة البلوتوث
+
               Container(
                 width: 100,
                 height: 100,
@@ -56,7 +56,6 @@ class _HomeScreenState extends State<HomeARScreen> {
 
               const SizedBox(height: 20),
 
-              // حالة البلوتوث
               StreamBuilder<BluetoothAdapterState>(
                 stream: FlutterBluePlus.adapterState,
                 builder: (context, snapshot) {
@@ -107,8 +106,6 @@ class _HomeScreenState extends State<HomeARScreen> {
               ),
 
               const Spacer(),
-
-              // زر البحث عن الأجهزة
               Container(
                 padding: const EdgeInsets.fromLTRB(0, 16, 0, 32),
                 child: SizedBox(
