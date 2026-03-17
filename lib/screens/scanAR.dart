@@ -7,7 +7,6 @@ import 'dart:io';
 
 class ScanARScreen extends StatefulWidget {
   const ScanARScreen({super.key});
-
   @override
   State<ScanARScreen> createState() => _Scan2ScreenState();
 }
@@ -28,6 +27,11 @@ class _Scan2ScreenState extends State<ScanARScreen> {
   @override
   void initState() {
     super.initState();
+    _initBluetooth();
+  }
+
+  Future<void> _initBluetooth() async {
+    await requestPermissions();
     startScan();
   }
 
@@ -51,14 +55,15 @@ class _Scan2ScreenState extends State<ScanARScreen> {
   void startScan() {
     _scanSub?.cancel();
     setState(() => scanedDevices = []);
-
     FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
-
     _scanSub = FlutterBluePlus.scanResults.listen((result) {
       final espDevices = result
           .where((r) => r.advertisementData.advName.contains('AIR SYSTEM'))
           .toList();
-      setState(() => scanedDevices = espDevices);
+      if (espDevices.isNotEmpty) {
+        setState(() => scanedDevices = espDevices);
+      }
+      // setState(() => scanedDevices = espDevices);
     });
   }
 
@@ -67,11 +72,12 @@ class _Scan2ScreenState extends State<ScanARScreen> {
     setState(() => isConnecting = true);
 
     await FlutterBluePlus.stopScan();
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     try {
       await device.connect(timeout: const Duration(seconds: 15));
       if (mounted) {
+        setState(() => isConnecting = false);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -80,8 +86,7 @@ class _Scan2ScreenState extends State<ScanARScreen> {
         );
       }
     } catch (e) {
-      print('فشل الاتصال: $e');
-    } finally {
+      debugPrint('Connection failed: $e');
       if (mounted) setState(() => isConnecting = false);
     }
   }

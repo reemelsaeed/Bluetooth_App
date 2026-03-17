@@ -30,9 +30,13 @@ class _Scan2ScreenState extends State<Scan2Screen> {
   @override
   void initState() {
     super.initState();
-    startScan();
+    _initBluetooth();
   }
 
+  Future<void> _initBluetooth() async {
+    await requestPermissions();
+    startScan();
+  }
   // Future<void> requestPermissions() async {
   //   await Permission.location.request();
   //   await Permission.bluetoothScan.request();
@@ -55,25 +59,28 @@ class _Scan2ScreenState extends State<Scan2Screen> {
     setState(() => scanedDevices = []);
 
     FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
-
     _scanSub = FlutterBluePlus.scanResults.listen((result) {
       final espDevices = result
           .where((r) => r.advertisementData.advName.contains('AIR SYSTEM'))
           .toList();
-      setState(() => scanedDevices = espDevices);
+      if (espDevices.isNotEmpty) {
+        setState(() => scanedDevices = espDevices);
+      }
     });
   }
 
+  //connect device
   Future<void> connectToDevice(BluetoothDevice device) async {
     if (isConnecting) return;
     setState(() => isConnecting = true);
 
     await FlutterBluePlus.stopScan();
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     try {
       await device.connect(timeout: const Duration(seconds: 15));
       if (mounted) {
+        setState(() => isConnecting = false);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -82,8 +89,7 @@ class _Scan2ScreenState extends State<Scan2Screen> {
         );
       }
     } catch (e) {
-      print('Connection failed: $e');
-    } finally {
+      debugPrint('Connection failed: $e');
       if (mounted) setState(() => isConnecting = false);
     }
   }

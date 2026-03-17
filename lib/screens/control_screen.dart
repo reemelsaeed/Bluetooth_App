@@ -93,6 +93,51 @@ class _ControlScreenState extends State<ControlScreen> {
       }
     });
   }
+  // void startNotify() async {
+  //   if (selectedChar == null) {
+  //     debugPrint('selectedChar is null');
+  //     return;
+  //   }
+  //   if (minChar != null) {
+  //     try {
+  //       final val = await minChar!.read();
+  //       if (val.isNotEmpty && val[0] != 0) {
+  //         setState(() => displayMin = val[0].toString());
+  //       }
+  //     } catch (e) {
+  //       debugPrint('minChar read error: $e');
+  //     }
+  //   }
+  //   if (targetChar != null) {
+  //     try {
+  //       final val = await targetChar!.read();
+  //       if (val.isNotEmpty) {
+  //         setState(() => displayTarget = val[0].toString());
+  //       }
+  //     } catch (e) {
+  //       debugPrint('targetChar read error: $e');
+  //     }
+  //   }
+  //   if (maxChar != null) {
+  //     try {
+  //       final val = await maxChar!.read();
+  //       if (val.isNotEmpty && val[0] != 0) {
+  //         setState(() => displayMax = val[0].toString());
+  //       }
+  //     } catch (e) {
+  //       debugPrint('maxChar read error: $e');
+  //     }
+  //   }
+  //   await selectedChar!.setNotifyValue(true);
+  //   selectedChar!.onValueReceived.listen((value) {
+  //     debugPrint('Data received: $value');
+  //     if (mounted && value.isNotEmpty) {
+  //       setState(() {
+  //         recivedValue = value[0].toString();
+  //       });
+  //     }
+  //   });
+  // }
 
   Future<void> sendonRe(BluetoothCharacteristic? char, List<int> value) async {
     if (char == null) return;
@@ -266,92 +311,11 @@ class _ControlScreenState extends State<ControlScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  width: 60,
-                                  height: 30,
-                                  child: TextField(
-                                    controller: _targetcontroller,
-                                    keyboardType: TextInputType.number,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      color: _textPri,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 4,
-                                      ),
-                                      hintText: '_ _',
-                                      hintStyle: TextStyle(
-                                        fontSize: 11,
-                                        color: _hint,
-                                      ),
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(color: _cyan),
-                                      ),
-                                    ),
-                                    onSubmitted: (value) async {
-                                      if (value.isEmpty) return;
-                                      if (displayMin.isEmpty) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              "Please set Min first",
-                                            ),
-                                          ),
-                                        );
-                                        _targetcontroller.clear();
-                                        return;
-                                      }
-                                      final targetVal = int.parse(value);
-                                      final minVal = int.tryParse(displayMin);
-                                      final maxVal = int.tryParse(displayMax);
-                                      if (minVal != null &&
-                                          targetVal < minVal) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              "Target can't be less than Min",
-                                            ),
-                                          ),
-                                        );
-                                        _targetcontroller.clear();
-                                        return;
-                                      }
-                                      if (maxVal != null &&
-                                          targetVal > maxVal) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              "Target can't be greater than Max",
-                                            ),
-                                          ),
-                                        );
-                                        _targetcontroller.clear();
-                                        return;
-                                      }
-                                      await sendonRe(
-                                        targetChar,
-                                        value.codeUnits,
-                                      );
-                                      setState(() => displayTarget = value);
-                                      _targetcontroller.clear();
-                                    },
-                                  ),
-                                ),
                                 if (displayTarget.isNotEmpty)
                                   Text(
-                                    'Target: $displayTarget',
+                                    displayTarget,
                                     style: const TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 28,
                                       color: _cyan,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -439,7 +403,7 @@ class _ControlScreenState extends State<ControlScreen> {
                         onSubmitted: (value) async {
                           if (value.isEmpty) return;
                           if (displayTarget.isNotEmpty &&
-                              int.parse(value) > int.parse(displayTarget)) {
+                              int.parse(value) >= int.parse(displayTarget)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
@@ -451,7 +415,7 @@ class _ControlScreenState extends State<ControlScreen> {
                             return;
                           }
                           if (displayMax.isNotEmpty &&
-                              int.parse(value) > int.parse(displayMax)) {
+                              int.parse(value) >= int.parse(displayMax)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("Min can't be greater than Max"),
@@ -472,6 +436,116 @@ class _ControlScreenState extends State<ControlScreen> {
 
               const SizedBox(height: 12),
 
+              // Target Card
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+                decoration: BoxDecoration(
+                  color: _card,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: _border, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 16,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: _cyan.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.my_location,
+                        color: _cyan,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Target',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: _textPri,
+                          ),
+                        ),
+                        if (displayTarget.isNotEmpty)
+                          Text(
+                            displayTarget,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: _cyan,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(width: 60),
+                    Expanded(
+                      child: TextField(
+                        controller: _targetcontroller,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(color: _textPri),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          hintText: 'set target',
+                          hintStyle: TextStyle(fontSize: 10, color: _hint),
+                        ),
+                        onSubmitted: (value) async {
+                          if (value.isEmpty) return;
+                          if (displayMin.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Please set Min first"),
+                              ),
+                            );
+                            _targetcontroller.clear();
+                            return;
+                          }
+                          final targetVal = int.parse(value);
+                          final minVal = int.tryParse(displayMin);
+                          final maxVal = int.tryParse(displayMax);
+                          if (minVal != null && targetVal < minVal) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Target can't be less than Min"),
+                              ),
+                            );
+                            _targetcontroller.clear();
+                            return;
+                          }
+                          if (maxVal != null && targetVal >= maxVal) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Target can't be greater than Max",
+                                ),
+                              ),
+                            );
+                            _targetcontroller.clear();
+                            return;
+                          }
+                          await sendonRe(targetChar, value.codeUnits);
+                          setState(() => displayTarget = value);
+                          _targetcontroller.clear();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
               // Max Card
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
@@ -554,7 +628,7 @@ class _ControlScreenState extends State<ControlScreen> {
                             _maxcontroller.clear();
                             return;
                           }
-                          if (int.parse(value) < int.parse(displayMin)) {
+                          if (int.parse(value) <= int.parse(displayMin)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("Max can't be less than Min"),
@@ -563,7 +637,7 @@ class _ControlScreenState extends State<ControlScreen> {
                             _maxcontroller.clear();
                             return;
                           }
-                          if (int.parse(value) < int.parse(displayTarget)) {
+                          if (int.parse(value) <= int.parse(displayTarget)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text("Max can't be less than Target"),
